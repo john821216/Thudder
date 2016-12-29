@@ -1,0 +1,22 @@
+body {
+	margin-left: 35%;
+	margin-top: 3%;
+}
+#start {
+	position: relative;
+	top: -12.5%;
+	width: 27.4em;
+	height: 4.2em;
+	background-color: rgb(150,150,150); 
+	color : white
+}
+#thunder{
+	position: relative;
+	right:45%;
+	top: 5%;
+	font-size: 150%;
+	font-family: cursive;
+}
+#myCanvas{
+	position: relative;
+}

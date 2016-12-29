@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="css/template.css" />
+		<meta charset="utf-8">
+		<title>Canvas</title>
+
+	</head>
+
+	<body>
+		<h1 id="thunder">
+			Thunder
+		</h1>
+		<canvas id="myCanvas" width="300" height="300"
+		></canvas>
+		<canvas id="myCanvas2" width="400" height="300"></canvas>
+
+		<p>
+			<button type="button" onclick=" disableStartButton()" id="start">
+				START!
+			</button>
+		</p>
+
+		<script>
+            //loading img
+            var c2 = document.getElementById("myCanvas2");
+            var ct2 = c2.getContext("2d");
+            var imgMain = new Image();
+            imgMain.src = "img/thunder.png";
+            imgMain.onload = function() {
+            		console.log("31");
+                ct2.drawImage(imgMain, 0, 0, 512, 512,180,0,200,200);
+            };
+
+            document.body.style.backgroundColor = 'rgb(150,150,150)';
+            ////////
+            var bloodLeft = 100;
+            var bloodTotal = 100;
+
+            /////////
+
+            var workers = [];
+            var workersPosition = [];
+            var gameOver = false;
+            ////////
+
+            var totalScore = 0;
+            ///////
+
+            var
+            workersGen;
+            var timer;
+            var currentLeftTime = 30;
+            ///
+            var c = document.getElementById("myCanvas");
+            var cxt2 = c.getContext("2d");
+            var stage = 1;
+            cxt2.strokeStyle = "Black";
+            cxt2.lineWidth = "1";
+            for (var x = 0; x <= 200; x += 200) {
+                cxt2.moveTo(x, 0);
+                cxt2.lineTo(x, 400);
+            }
+
+            for (var x = 0; x <= 300; x += 300) {
+                cxt2.moveTo(0, x);
+                cxt2.lineTo(300, x);
+            }
+
+            cxt2.moveTo(300, 0);
+            cxt2.lineTo(300, 300);
+            for (var x = 1; x <= 6; x++) {
+                cxt2.moveTo(200, 60 * x);
+                cxt2.lineTo(300, 60 * x);
+            }
+            cxt2.stroke();
+            score();
+            blood();
+            iniTime();
+            function score() {
+                cxt2.clearRect(210, 65, 70, 43);
+                cxt2.font = "30px Cursive";
+                var string = "Score: " + totalScore + "";
+                cxt2.fillText(string, 210, 95, 70);
+            }
+
+            function blood() {
+                if (bloodLeft <= 0) {
+                    clearInterval(workersGen);
+                    cxt2.clearRect(0, 0, 200, 300);
+                    for (var x = 0; x <= 200; x += 200) {
+                        cxt2.moveTo(x, 0);
+                        cxt2.lineTo(x, 400);
+                    }
+
+                    for (var x = 0; x <= 300; x += 300) {
+                        cxt2.moveTo(0, x);
+                        cxt2.lineTo(300, x);
+                    }
+                    cxt2.stroke();
+                    gameOver = true;
+                    GameOver();
+                    //console.log("GameOver");
+
+                    //return;
+                }
+                cxt2.clearRect(210, 123, 70, 40);
+                cxt2.font = "30px Cursive";
+                cxt2.color = "Black";
+                var string = "HP " + bloodLeft + "/" + bloodTotal;
+                cxt2.fillText(string, 210, 155, 70);
+            }
+
+            function disableStartButton() {
+                document.getElementById("start").onclick = function() {
+                    //disable
+                    this.disabled = true;
+
+                };
+                timer = setInterval(timerFuc, 1000);
+                stageText();
+            }
+
+            function GameOver() {
+                cxt2.font = "45px Cursive";
+                var string = "GameOver";
+                cxt2.fillText(string, 70, 155, 70);
+
+            }
+
+            function iniTime() {
+                cxt2.font = "30px Cursive";
+                var string = "time " + currentLeftTime + "";
+                cxt2.fillText(string, 210, 40, 70);
+            }
+
+            function timerFuc() {
+                cxt2.clearRect(210, 5, 70, 43);
+                cxt2.font = "30px Cursive";
+                var string = "time " + currentLeftTime + "";
+                cxt2.fillText(string, 210, 40, 70);
+                currentLeftTime--;
+                if (currentLeftTime < 0) {
+                    clearInterval(timer);
+                    //restartGame();
+                    stageText();
+                    currentLeftTime = 30;
+                    timer = setInterval(timerFuc, 1000);
+                } else if (gameOver) {
+                    clearInterval(timer);
+                }
+            }
+
+            function drawRed() {
+                bloodLeft -= (parseInt)(10 * stage * 1.3);
+                blood();
+                cxt2.strokeStyle = "red";
+                cxt2.lineWidth = "1";
+                for (var x = 0; x <= 200; x += 200) {
+                    cxt2.moveTo(x, 0);
+                    cxt2.lineTo(x, 400);
+                }
+
+                for (var x = 0; x <= 300; x += 300) {
+                    cxt2.moveTo(0, x);
+                    cxt2.lineTo(300, x);
+                }
+                cxt2.stroke();
+                setTimeout(function() {
+                    cxt2.strokeStyle = "Black";
+                    cxt2.lineWidth = "1";
+                    for (var x = 0; x <= 200; x += 200) {
+                        cxt2.moveTo(x, 0);
+                        cxt2.lineTo(x, 400);
+                    }
+
+                    for (var x = 0; x <= 300; x += 300) {
+                        cxt2.moveTo(0, x);
+                        cxt2.lineTo(300, x);
+                    }
+                    cxt2.stroke();
+                }, 1000);
+            }
+
+            var planeX = 30;
+            var planeY = 255;
+            var monsterY = 8;
+            var bullets = [];
+            var bulletsPosition = [];
+            var currentBulletNumber = 0;
+            var state = [];
+            var workers = [];
+            var workersPosition = [];
+            var millisecondsToWait = 10000;
+            var currentWorkers = 0;
+
+            var startGame = function() {
+                var drawPlane = function(x, y) {
+                    var img = new Image();
+                    img.src = "img/plane.png";
+                    img.onload = function() {
+                        cxt2.drawImage(img, 0, 0, 128, 128, x, y, 30, 30);
+                    };
+                };
+                drawPlane(planeX, planeY);
+                window.addEventListener("keydown", doKeyDown, true);
+                //ini();
+                function doKeyDown(e) {
+                    //console.log(e);
+                    //   alert(e.keyCode);
+                    if (e.keyCode == 37) {
+                        if (planeX > 10) {
+                            cxt2.clearRect(planeX, planeY, 30, 30);
+                            planeX -= 10;
+                            drawPlane(planeX, planeY);
+                        }
+                    } else if (e.keyCode == 39) {
+                        if (planeX < 160) {
+                            cxt2.clearRect(planeX, planeY, 30, 30);
+                            planeX += 10;
+                            drawPlane(planeX, planeY);
+                        }
+                    } else if (e.keyCode == 32 && !gameOver) {
+                        //currentBulletNumber ++;
+                        bullets.push(new Worker('js/bullet.js'));
+                        bulletAddEventListener(currentBulletNumber);
+                        currentBulletNumber++;
+
+                    }
+
+                }
+
+                function bulletAddEventListener(i) {
+
+                    var currentPlaneX = planeX;
+                    var currentPlaneY = planeY - 30;
+                    //drawBullet(currentPlaneX, currentPlaneY - 30);
+                    bulletsPosition.push({
+                        "number" : i,
+                        "px" : currentPlaneX,
+                        "py" : 255 - 30
+                    });
+                    bullets[i].addEventListener('message', function(e) {
+                        //console.log('Bullet said: ', e.data + " " + i);
+                        if (e.data.msg == "moveTo") {
+                            //console.log("66");
+                            if (!hasBulletHitWall(i, bulletsPosition[i].py, e.data.plus)) {
+                                bulletMove(i, e.data.y, e.data.plus);
+                                //console.log("77");
+                            }
+                        } else {
+
+                        }
+                    }, false);
+
+                    bullets[i].postMessage('moveUp');
+                }
+
+                function bulletMove(i, y, delta) {
+                    var stop = false;
+                    cxt2.clearRect(bulletsPosition[i].px, (bulletsPosition[i].py), 30, 30);
+                    for ( k = 0; k < workers.length; k++) {
+                        if (workersPosition[k].y <= bulletsPosition[i].py && bulletsPosition[i].py <= workersPosition[k].y + 30 && ((workersPosition[k].x <= bulletsPosition[i].px && bulletsPosition[i].px <= workersPosition[k].x + 30) || (workersPosition[k].x <= bulletsPosition[i].px + 30 && bulletsPosition[i].px + 30 <= workersPosition[k].x + 30)) && state[k] == "ok" && !gameOver) {
+                            //console.log("92" + k + " " + i);
+                            totalScore += 5;
+                            score();
+                            workers[k].postMessage('die');
+                            state[k] = "noOk";
+                            bullets[i].postMessage('die');
+                            workersDie(k);
+                            bulletsDie(i);
+                            //console.log(bulletsPosition[i].px + " aa" + bulletsPosition[i].py);
+                            //cxt2.clearRect(bulletsPosition[i].px + 30, bulletsPosition[i].py - delta, 30, 30);
+                            stop = true;
+                        }
+                    }
+                    //console.log(i*40+3 + " "  + (monsterY + (parseInt)(y) -delta) + " 80");
+                    if (!stop) {
+                        drawBullet(bulletsPosition[i].px, bulletsPosition[i].py - delta);
+
+                        bulletsPosition[i].py = bulletsPosition[i].py - delta;
+                    }
+
+                }
+
+                //while (true) {
+                function ini() {
+                    for ( i = 0; i < (parseInt)(stage * 1.5); i++) {
+                        //console.log("295");
+                        workers.push(new Worker('js/worker.js'));
+                        state.push("ok");
+                        workerAddEventListener(currentWorkers);
+                        currentWorkers++;
+                    }
+                }
+
+                workersGen = setInterval(ini, (parseInt)(5000 / stage * 2.2));
+                //}
+                //}
+
+                function workerAddEventListener(i) {
+                    var wpx = Math.floor(Math.random() * 165) + 3;
+                    drawMonster(wpx, 10);
+                    workersPosition.push({
+                        "number" : i,
+                        "x" : wpx,
+                        "y" : 10
+                    });
+                    workers[i].addEventListener('message', function(e) {
+                        //console.log('Worker said: ', e.data + " " + i);
+                        if (e.data.msg == "moveTo") {
+                            //console.log("66");
+                            if (!hasWall(i, e.data.y, e.data.plus) && !hasPlane(i, (parseInt)(e.data.y), e.data.plus) && !gameOver) {
+                                //console.log("245");
+                                workersPosition[i].y = monsterY + (parseInt)(e.data.y);
+                                workersPosition[i].x = wpx;
+                                //console.log(monsterY + (parseInt)(e.data.y) + " 75");
+                                monsterMove(i, e.data.plus);
+                                //console.log(workersPosition[i]);
+                            }
+
+                            //console.log(i + " " + e.data.split(":")[1]);
+                        } else {
+
+                        }
+                    }, false);
+
+                    //workers[i].postMessage('draw');
+                    workers[i].postMessage('moveDown' + "," + stage);
+                }
+
+                function hasWall(i, y, delta) {
+                    if (y + 30 >= 300 && !gameOver) {
+                        workers[i].postMessage('die');
+                        drawRed();
+                        workersDie(i);
+                        //drawMonster((i * 40 + 3), 10);
+                        //workersPosition[i].y = 10;
+                        //console.log(workersPosition);
+                        //workers[i].postMessage('moveDown');
+                        return true;
+                    }
+                    return false;
+
+                }
+
+                function hasBulletHitWall(i, y, delta) {
+                    if (y - 15 <= 0 && !gameOver) {
+                        bullets[i].postMessage('die');
+                        bulletsDie(i);
+                        return true;
+                    }
+                    return false;
+                }
+
+                function hasPlane(i, y, delta) {
+                    if (planeY <= (y + 30) && planeX - 30 <= workersPosition[i].x && workersPosition[i].x <= planeX + 30 && !gameOver) {
+                        workers[i].postMessage('die');
+                        drawRed();
+                        workersDie(i);
+                        //drawMonster((i * 40 + 3), 10);
+                        //workersPosition[i].y = 10;
+                        //workers[i].postMessage('moveDown');
+                        return true;
+                    }
+                    return false;
+                }
+
+                function workersDie(i) {
+                    cxt2.clearRect(workersPosition[i].x, workersPosition[i].y, 30, 30);
+                }
+
+                function bulletsDie(i) {
+                    cxt2.clearRect(bulletsPosition[i].px, bulletsPosition[i].py, 30, 30);
+                }
+
+                function monsterMove(i, delta) {
+                    cxt2.clearRect(workersPosition[i].x, workersPosition[i].y - delta, 30, 30);
+                    //console.log(i*40+3 + " "  + (monsterY + (parseInt)(y) -delta) + " 80");
+                    drawMonster(workersPosition[i].x, workersPosition[i].y);
+                }
+
+                function drawMonster(x, y) {
+                    var img = new Image();
+                    img.src = "img/monster.png";
+                    img.onload = function() {
+                        cxt2.drawImage(img, 0, 0, 231, 194, x, y, 30, 30);
+                    };
+                }
+
+                function drawBullet(x, y) {
+                    var img = new Image();
+                    img.src = "img/bullet.png";
+                    img.onload = function() {
+                        cxt2.drawImage(img, 0, 0, 32, 32, x, y, 30, 30);
+                    };
+                }
+
+            };
+
+            function stageText() {
+                cxt2.font = "45px Cursive";
+                var string = "Stage " + stage;
+                cxt2.fillText(string, 70, 155, 70);
+                var millisecondsToWait;
+                var delta = bloodTotal - bloodLeft;
+                bloodLeft = (parseInt)(100 * stage * 1.2) - (bloodTotal - bloodLeft) + (parseInt)(stage * 80);
+
+                bloodTotal = (parseInt)(100 * stage * 1.2);
+                if (bloodLeft >= bloodTotal) {
+                    bloodLeft = bloodTotal;
+                }
+                blood();
+                console.log(stage);
+                if (stage == 1) {
+                    millisecondsToWait = 1500;
+                } else {
+                    millisecondsToWait = 1000;
+                }
+                setTimeout(function() {
+                    cxt2.clearRect(70, 115, 70, 70);
+                    if (stage == 1) {
+                        startGame();
+
+                    }
+                    stage++;
+                }, millisecondsToWait);
+
+            }
+		</script>
+	</body>
+</html>
